@@ -3,6 +3,8 @@ const carrito = document.querySelector('#carrito');
 const contenedorCarrito = document.querySelector('#lista-carrito tbody');
 const listaCursos = document.querySelector('#lista-cursos');
 const vaciaCarrito = document.querySelector('#vaciar-carrito');
+const cursoV = document.querySelector('.row');
+
 
 let articulosCarrito = [];
 
@@ -12,6 +14,8 @@ cargarEventListeners();
 function cargarEventListeners (){
     //cuando presionemos listaCursos se va a ejecutar la funcion de agregarCurso
     listaCursos.addEventListener('click',agregarCurso);
+
+    cursoV.addEventListener('click',abrirVentana);
 
     //Elimina cursos de carrito
     carrito.addEventListener('click',eliminarCurso);
@@ -31,6 +35,9 @@ function agregarCurso(e){ //con e identificamos a que elemento le damos click
     if(e.target.classList.contains('agregar-carrito')){ //identificacions si al elemento que le damos click contiene la clase de agregar-carrito
         const CursoSeleccionado = e.target.parentElement.parentElement;//seleccionamos al padre del padre del elemento al que le damos click
         leerDatosCurso(CursoSeleccionado);
+    }else if(e.target.classList.contains('imagen-curso')){
+        abrirVentana(e.target.parentElement);
+        
     }
 }
 //elimina un curso del carrito
@@ -117,7 +124,7 @@ function carritoHTML(){
     });
 }
 
-function limpiarHTML(elemento, e){
+function limpiarHTML(elemento){
     //Forma lenta
     // elemento.innerHTML ='';
 
@@ -127,4 +134,53 @@ function limpiarHTML(elemento, e){
         elemento.removeChild(elemento.firstChild);
     }
 }
+
+//creamos una ventana modal
+function abrirVentana(curso){
+    
+    const infoCurso ={
+        nombre: curso.querySelector('h4').textContent,
+        imagen: curso.querySelector('img').src,
+        precio: curso.querySelector('.precio span').textContent,
+        autor: curso.querySelector('.info-card p').textContent,
+        estrellas: curso.querySelector('.info-card img').src
+
+    }
+    crearVentana(infoCurso);
+}  
+
+function crearVentana(curso){
+    const {imagen, nombre, precio, autor,estrellas} = curso;
+    const ventanaM = document.createElement('DIV');
+
+    ventanaM.classList.add('ventana-modal');
+    ventanaM.innerHTML = `
+        <div class="contenido-ventana">
+        
+            <img src="${imagen}" class="imagen "width="300">
+            
+            <div>
+                <h4>${nombre}</h4>
+                <p>${autor}</p>
+                <img src="${estrellas}" >
+                <p>${precio}</p>
+            </div>
+        </div>
+    `; 
+   
+
+    //cerra Modal    
+    ventanaM.addEventListener('click',function(){
+        const body = document.querySelector('body');
+        body.classList.remove('fijar');
+        ventanaM.remove();
+    })
+
+    const body = document.querySelector('body');
+    body.classList.add("fijar");
+    body.appendChild(ventanaM);
+
+
+}
+
 
